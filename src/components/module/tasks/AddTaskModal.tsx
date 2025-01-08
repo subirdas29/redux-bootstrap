@@ -15,24 +15,31 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Textarea } from "@/components/ui/textarea"
 import { cn } from "@/lib/utils"
 import { addTask } from "@/redux/features/task/taskSlice"
-import { useAppDispatch } from "@/redux/hook"
+import { selectUsers } from "@/redux/features/user/userSlice"
+import { useAppDispatch, useAppSelector } from "@/redux/hook"
 import { ITask } from "@/types/types"
 import { DialogDescription } from "@radix-ui/react-dialog"
 import { format } from "date-fns"
 import { CalendarIcon } from "lucide-react"
+import { useState } from "react"
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form"
 
 
 export function AddTaskModel() {
     const form = useForm() //react hook form er 7e shdcn-ui er form k connect korte ae hook niya hyse
+    const [open,setOpen] = useState(false)
 
+    const users = useAppSelector(selectUsers)
     const dispatch = useAppDispatch()
     const onSubmit:SubmitHandler<FieldValues> = (data) =>{
-        console.log(data)
         dispatch(addTask(data as ITask))
+        setOpen(false)
+        form.reset() 
+        //react hook form e reset namer ekta method ashe ja form clear kore
     }
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
+       {/* shdcn e open and onOpenChange namer 2ta propertise ashe model k handle korar jonno */}
       <DialogTrigger asChild>
         <Button>Add Task</Button>
       </DialogTrigger>
@@ -73,12 +80,33 @@ export function AddTaskModel() {
       </FormItem>
     )}
   />
+   <FormField
+          control={form.control}
+          name="assignedTo"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Assigned To</FormLabel>
+              <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <FormControl>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select a Assign To" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                {
+                  users.map((user) => <SelectItem value={user.id}>{user.name}</SelectItem>)
+                }
+                </SelectContent>
+              </Select>
+            </FormItem>
+          )}
+        />
     <FormField
           control={form.control}
           name="priority"
           render={({ field }) => (
             <FormItem>
-              <FormLabel></FormLabel>
+              <FormLabel>Priority</FormLabel>
               <Select onValueChange={field.onChange} defaultValue={field.value}>
                 <FormControl>
                   <SelectTrigger>

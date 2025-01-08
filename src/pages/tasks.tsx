@@ -9,7 +9,7 @@ const Tasks = () => {
   const dispatch = useAppDispatch()
 
   return (
-    <div className="mx-auto max-w-7xl px-5 mt-20">
+    <div className="mx-auto max-w-7xl px-5 ">
       <div className="flex justify-end items-center gap-5">
       <h1 className="mr-auto">Tasks</h1>
       <Tabs defaultValue = "all" className="my-5">
